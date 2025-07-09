@@ -8,7 +8,8 @@ La cartella principale contiene questo file, la lista delle esercitazioni (`List
 
 Ciascuna cartella contiene il materiale per le singole esercitazioni scelte, quindi
 + una cartella con i codici MATLAB (`.txt`) e i modelli Simulink (`.slx`)
-+ la presentazione (`.pdf`)
++ la presentazione (`nome_cartella.pdf`)
++ altri file usati come documentazione per approfondimenti
 
 Le esercitazioni (in no. 5) selezionate per la prova sono
 + 1 e 2 per la *meccanica respiratoria*
