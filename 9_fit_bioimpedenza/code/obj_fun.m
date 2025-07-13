@@ -8,5 +8,6 @@ e=y_pred-y;
 
 % objective function 
 E=1/2*sum(e.^2);
+% E=log(E+eps);
 
 end

@@ -7,7 +7,7 @@ fnt_sz =12;
 
 addpath('data/')
 
-model = 2;
+model = 3;
 switch model
     case 1
         load('Fricke_large')
@@ -31,20 +31,37 @@ switch model
     
         alpha = 0;
 
+        % study_freq_idx = freq>0;
         study_freq_idx = freq<2e5;
 
     case 3
         load('Banana')
+
+        % Dati ottenuti dal plot
+            Rinf = -0.352931e3;
+            R0 = 182.735e3;
+
+            % tau = 1/\omega^\ast; 
+            tau = 1/(2*pi)*1/1747.53;
+            r = R0 - Rinf;
+            m = 50.0968e3;
+            alpha = 1-2/pi*acos((-4*m^2+r^2)/(4*m^2+r^2));
         
-        R1 = 0;
-        R2 = 1;
-        C = 0;
-        V = 0; % ???
+        % Formule per il modello elettrico
+            % Rinf = R2*R1/(R2+R1);
+            % R0 = R2;
+            % tau = (R2+R1)*C;
 
-        alpha = 0;
+        % Invertite abbiamo
+            R1 = R0 * Rinf / (R0 - Rinf);
+            R2 = R0;
+            C = tau / (R2 + R1);
+        
+        V = 1; % dato non fornito. assumiamo per ora = 1
 
-        study_freq_idx = freq<5e5 & freq > 1e2;
+        study_freq_idx = freq>0;
 end
+
 V_meas = V_meas(~isnan(V_meas));
 freq = freq(~isnan(V_meas));
 
@@ -59,7 +76,7 @@ Rinf = R2*R1/(R2+R1);
 R0 = R2;
 tau = (R2+R1)*C;
 
-fit_alpha = 1;
+fit_alpha = 0;
 if fit_alpha
     true_params = [Rinf, R0, tau, alpha];
 else
@@ -77,20 +94,17 @@ Im_study_Z = imag(study_Z);
 
 y = [Re_study_Z, Im_study_Z];
 
-if fit_alpha
-    init_params = [0.4, 0.8, 1.5, 1].*true_params;
-else
-    init_params = [0.4, 0.8, 1.5].*true_params;
-end
+init_params = true_params + rand(size(true_params)) .* true_params * 1e-1;
 
-opts = optimset('TolFun', 1e-10, 'TolX', 1e-13, 'MaxIter', 1e5, 'MaxFunEvals', 1e5);
+opts = optimset('TolFun', 1e-10, 'TolX', 1e-13, 'MaxIter', 1e5, 'MaxFunEvals', 1e5, ...
+    'PlotFcns', 'optimplotfval' ...
+    );
 [fitted_params, obj_fun_val, exitflag, output]=fminsearch(@obj_fun, init_params, opts, y, study_freq, Z_HF2);
-
-Z = -G*R*V_app./V_meas; 
 
 fitted_Rinf = fitted_params(1);
 fitted_R0 = fitted_params(2);
 fitted_tau = fitted_params(3);
+
 if fit_alpha
     fitted_alpha = fitted_params(4);
 else
@@ -98,6 +112,7 @@ else
 end
 
 fitted_Z = bioparams2Z(fitted_Rinf, fitted_R0, fitted_tau, fitted_alpha, study_freq);
+theoric_Z = bioparams2Z(Rinf, R0, tau, alpha, freq);
 
 figure()
     hold on, box on, grid on
@@ -111,10 +126,13 @@ figure()
     plot(study_freq, real(fitted_Z)*1e-3, 'g', 'LineWidth', lw, 'LineStyle', '--');
     plot(study_freq, -imag(fitted_Z)*1e-3, 'c', 'LineWidth', lw, 'LineStyle', '--');
     
+    plot(freq, real(theoric_Z)*1e-3, 'g', 'LineWidth', lw, 'LineStyle', ':');
+    plot(freq, -imag(theoric_Z)*1e-3, 'c', 'LineWidth', lw, 'LineStyle', ':');
+ 
     set(gca, 'XScale', 'log')
     xlabel('Frequency (Hz)')
     ylabel('Impedance (kOhm)')
-    legend('Re true fitted', '-Im true fitted', 'Re true', '-Im true', 'Re predict', '-Im predict')
+    legend('Re true fitted', '-Im true fitted', 'Re true', '-Im true', 'Re predict', '-Im predict', 'Re theoric', '-Im theoric')
 
 figure()
     hold on, box on, grid on
