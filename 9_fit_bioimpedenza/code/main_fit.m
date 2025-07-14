@@ -76,7 +76,7 @@ Rinf = R2*R1/(R2+R1);
 R0 = R2;
 tau = (R2+R1)*C;
 
-fit_alpha = 0;
+fit_alpha = 1;
 if fit_alpha
     true_params = [Rinf, R0, tau, alpha];
 else
@@ -132,7 +132,7 @@ figure()
     set(gca, 'XScale', 'log')
     xlabel('Frequency (Hz)')
     ylabel('Impedance (kOhm)')
-    legend('Re true fitted', '-Im true fitted', 'Re true', '-Im true', 'Re predict', '-Im predict', 'Re theoric', '-Im theoric')
+    legend('Re true (used to fit)', '-Im true (used to fit)', 'Re true', '-Im true', 'Re predicted', '-Im predicted', 'Re theoric', '-Im theoric')
 
 figure()
     hold on, box on, grid on
@@ -142,7 +142,7 @@ figure()
     
     xlabel('Frequency (Hz)')
     ylabel('Impedance (kOhm)')
-    legend('Re true - predict', '-Im true - predict');
+    legend('Re true - predicted', '-Im true - predicted');
 
     set(gca, 'XScale', 'log')
 
@@ -156,5 +156,28 @@ figure()
     xlabel('Re(Z) (kOhm)')
     ylabel('-Im(Z) (kOhm)')
     title('Cole-Cole Diagram')
-    legend('true fitted', 'true', 'predict')
+    legend('true (used to fit)', 'true', 'predicted')
     axis equal;
+
+% Bonus: grafico lineare suggerito dall'articolo originale di Cole del 1941
+% voglio verificare se per le misure di bioimpedenza analizzate vale che
+    % the locus of $\log_e | \frac vu |$ plotted against $\log_e \omega$
+    % is a straight line of slope $1 - \alpha$
+% figure();
+%     hold on, box on, grid on
+% 
+%     plot(study_freq(2:end), diff(log(abs(real(study_Z - Rinf) ./ -imag(study_Z)))), 'm', 'LineWidth', lw)
+%     plot(freq(2:end), diff(log(abs(real(Z - Rinf) ./ -imag(Z)))), 'm', 'LineWidth', lw, 'LineStyle', ':')
+%     plot(study_freq(2:end), diff(log(abs(real(fitted_Z - fitted_Rinf) ./ -imag(fitted_Z)))), 'g', 'LineWidth', lw, 'LineStyle', '--')
+% 
+% 
+%     plot(freq, (alpha) * ones(size(freq)), 'Color', [.3,.4,.2], 'LineWidth', lw, 'LineStyle', ':');
+%     plot(study_freq, (fitted_alpha) * ones(size(study_freq)), 'Color', 2 * [.3,.4,.2], 'LineWidth', lw, 'LineStyle', '--');
+% 
+%     xlabel('Frequency \omega (Hz)')
+%     ylabel('Slope of log_e(abs(\Re(Z)/-\Im(Z))')
+%     set(gca, 'XScale', 'log')
+%     legend('true (used to fit)', 'true', 'predicted', '1 - \alpha', '1 - \alpha predicted')
+
+fitted_a = fitted_tau / 10^(floor(log10(fitted_tau)));
+fitted_b = - floor(log10(fitted_tau));
