@@ -22,6 +22,10 @@ clc;
 clear;
 close all;
 
+fn_sz = 16;
+lw = 3;
+ms = 7;
+
 SINE = 0;
 SQUARE = 1;
 
@@ -30,7 +34,7 @@ input_type = SINE;
 % Questi parametri saranno usati in model.slx
 % Parametri del modello respiratorio
 Rp = .5;
-Rc = 1;
+Rc = 1.;
 Cs = .005;
 CL = .2;
 Cw = .2;
@@ -44,7 +48,6 @@ save("parms.mat", "Rp", "Rc", "Cs", "CL", "Cw", "-mat");
 % sa che i programmatori possono scrivere codice buggato)
 PaO_parms = zeros(1, 7);
 
-% Parametri della forma della pressione PaO (grazie ChatGPT)
 if(input_type == SINE)
     % Valori adottati da Khoo
     PaO_A = 2.5;
@@ -90,7 +93,8 @@ D_freq = + eps;
 % frequenza di taglio così che la sua funzione di trasferimento sia
 % quantomeno propria
 
-noise_A = 1e-4;
+noise_A = 0;
+% noise_A = 1e-4;
 
 sim("./model.slx");
 output_data = load("output_data.mat").ans;
@@ -118,6 +122,7 @@ plot(output_data_time, output_data_Q);
 plot(output_data_time, output_data_V);
 legend([ "PaO" , "QA", "VA" , "Q" , "V" ]);
 title("Segnali reali");
+% the_magic_instruction(fn_sz, lw, ms)
 
 % Analisi delle funzioni di trasferimento rispetto a Pao
 % Costruzione esplicita delle tfs di interesse
@@ -150,6 +155,7 @@ plot(output_data_time, output_data_Q, "Color", "r");
 legend(["Q", "Q teorico"]);
 
 linkaxes([x1,x2], "x");
+% the_magic_instruction(fn_sz, lw, ms)
 
 figure(3);
 hold on;
@@ -159,6 +165,7 @@ bode(W_PaO_Q);
 bode(W_PaO_V);
 legend(["QA", "VA", "Q", "V"]);
 title("Diagrammi di Bode delle tf teoriche"); 
+% the_magic_instruction(fn_sz, lw, ms)
 
 % Permette di ottenere guadagno e fase su frequenze all'infuori del range
 % ammissibile dal sampling del segnale (vedi dT di sopra)
@@ -185,6 +192,8 @@ legend(["QA", "VA", "Q", "V", "PaO"]);
 title("Diagrammi di Bode costruiti dalle fft dei segnali reali");
 hold off;
 
+% the_magic_instruction(fn_sz, lw, ms)
+
 x4 = subplot(2, 1, 2);
 semilogx(f_QA, unwrap(phase_QA - phase_PaO) * 180 / pi); hold on;
 semilogx(f_VA, unwrap(phase_VA - phase_PaO) * 180 / pi);
@@ -194,3 +203,5 @@ yyaxis right; semilogx(f_PaO, unwrap(phase_PaO) * 180 / pi, "LineStyle", "--");
 hold off; 
 
 linkaxes([x3,x4], "x");
+
+% the_magic_instruction(fn_sz, lw, ms)

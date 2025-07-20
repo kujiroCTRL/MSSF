@@ -40,7 +40,7 @@ output_data_VA = output_data.Data(:, 5);
 theta_true = [Rc; Rp; Cs; CL; Cw];
 
 % Stima iniziale
-theta_init = theta_true .* [2, 1, 3, .2, 3]';
+theta_init = theta_true .* (1 + (rand(size(theta_true)) - .5) * .8);
 max_iter = 100; % Numero massimo di iterazioni
 
 options = optimset("MaxIter", max_iter);

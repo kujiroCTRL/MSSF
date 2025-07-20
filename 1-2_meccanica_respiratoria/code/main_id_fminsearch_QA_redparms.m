@@ -45,7 +45,7 @@ a0 = CLw;
 theta_true = [a2; a1; a0];
 
 % Stima iniziale
-theta_init = theta_true .* [1/2, 2, 1/10]';
+theta_init = theta_true .* (1 + (rand(size(theta_true)) - .5) * .8);
 max_iter = 100; % Numero massimo di iterazioni
 
 options = optimset("MaxIter", max_iter);

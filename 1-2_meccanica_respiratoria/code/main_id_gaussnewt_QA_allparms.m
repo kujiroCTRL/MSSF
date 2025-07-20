@@ -40,7 +40,7 @@ output_data_VA = output_data.Data(:, 5);
 theta_true = [Rc; Rp; Cs; CL; Cw];
 
 % Stima iniziale
-theta_init = theta_true .* [1 / 10, 1, 1, 1, 1]';
+theta_init = theta_true .* (1 + (rand(size(theta_true)) - .5) * .8);
 
 % Parametri di ottimizzazione
 alpha       = 1e-1; % Parametro di rilassamento
@@ -59,7 +59,7 @@ plot_flag = true;
 
 n_theta = size(theta_init, 1);
 
-theta_colors =  ["yellow", "magenta", "cyan", "red", "blue"];
+theta_colors =  ["red", "blue", "green", "cyan", "magenta"];
 theta_names = ["Rc", "Rp", "Cs", "CL", "Cw"];
 
 if plot_flag

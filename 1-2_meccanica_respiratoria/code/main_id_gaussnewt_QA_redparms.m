@@ -27,7 +27,6 @@ Cs = parms.Cs;
 CL = parms.CL;
 Cw = parms.Cw;
 
-
 output_data = load("output_data.mat").ans;
 
 output_data_time = output_data.Time;
@@ -46,7 +45,7 @@ a0 = CLw;
 theta_true = [a2; a1; a0];
 
 % Stima iniziale
-theta_init = theta_true;
+theta_init = theta_true .* (1 + (rand(size(theta_true)) - .5) * .8);
 
 % Parametri di ottimizzazione
 alpha       = 1e-1; % Parametro di rilassamento
@@ -65,7 +64,7 @@ plot_flag = true;
 
 n_theta = size(theta_init, 1);
 
-theta_colors =  ["yellow", "magenta", "cyan"];
+theta_colors =  ["red", "blue", "green"];
 theta_names = ["a2", "a1", "a0"];
 
 if plot_flag
@@ -158,10 +157,10 @@ hold on;
 plot(output_data_time, QA_init);
 plot(output_data_time, QA_est);
 legend(["QA vero", "QA iniziale", "QA stimato"]);
-title("Stima dei parametri completi con gauss-newton su QA");
+title("Stima dei parametri ridotti con gauss-newton su QA");
 
 % Stampa dei risultati del fitting
-fprintf("### GN su QA tutti i parametri ###\n");
+fprintf("### GN su QA parametri ridotti ###\n");
 fprintf("Report sul fitting dei parametri\n");
 fprintf("Parametri\n   %10.10s %10.10s %10.10s %21.21s\n", ...
     "veri", "iniziali", "stimati", "errori relativi");

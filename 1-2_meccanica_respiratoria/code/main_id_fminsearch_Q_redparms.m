@@ -6,7 +6,7 @@ di Lorenzo Casavecchia, m.0350001
 Modificare i codici Matlab relativi all’identificazione parametrica del
 modello RLC della meccanica respiratoria tramite fminsearch.m, considerando
 i due parametri LC ed RC anziché i tre parametri R, L e C. 
-
+    
 Completare il codice per l’identificazione parametrica con il metodo di
 Gauss-Newton (i.e., scrivere le routines rlc_fun_two_parameters.m e
 jacobian_fun.m). Comprendere i dettagli del codice.
@@ -44,11 +44,10 @@ a1 = Rc + Rp + Rc * Cs * CLw;
 a0 = CLw;
 
 b1 = Rp - 1;
-b0 = CLw;
-theta_true = 1 / Rc .* [a2; a1; a0; b1; b0];
+theta_true = 1 / Rc .* [a2; a1; a0; b1];
 
 % Stima iniziale
-theta_init = theta_true .* [2, 1, 3, 1, .5]';
+theta_init = theta_true .* (1 + (rand(size(theta_true)) - .5) * .8);
 max_iter = 100; % Numero massimo di iterazioni
 
 options = optimset("MaxIter", max_iter);% options = optimset('PlotFcns','optimplotfval','TolX',1e-7);
@@ -62,7 +61,7 @@ options = optimset("MaxIter", max_iter);% options = optimset('PlotFcns','optimpl
         output_data_PaO, ... % e l'ingresso è PaO
         output_data_time ...
     );
-theta_names = ["a2", "a1", "a0", "b1", "b0"];
+theta_names = ["a2", "a1", "a0", "b1"];
 
 theta_rel_init = abs((theta_init - theta_true)) ./ (abs(theta_true));
 theta_rel_est  = abs((theta_est - theta_true)) ./ (abs(theta_true));
